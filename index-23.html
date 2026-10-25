@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="cs"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050a14">
+<meta name="robots" content="noindex,nofollow">
+<title>Trade Log</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--void:#050a14;--panel:rgba(14,26,46,.74);--ln:rgba(61,231,255,.2);--tx:#e6f4ff;--mu:#7f9bb8;--cy:#3de7ff;--vi:#a58bff;--au:#ffc65a;--up:#38f0b0;--dn:#ff5c8a;--fh:'Chakra Petch',system-ui,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--void)}
+body{margin:0 auto;max-width:620px;min-height:100vh;color:var(--tx);font:15px/1.45 system-ui,sans-serif;padding:max(12px,env(safe-area-inset-top)) 14px calc(90px + env(safe-area-inset-bottom));background:radial-gradient(900px 500px at 90% -10%,rgba(165,139,255,.18),transparent 60%),radial-gradient(700px 500px at -10% 35%,rgba(61,231,255,.11),transparent 60%),var(--void)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:linear-gradient(rgba(61,231,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(61,231,255,.045) 1px,transparent 1px);background-size:34px 34px;-webkit-mask-image:linear-gradient(#000,transparent 75%);mask-image:linear-gradient(#000,transparent 75%)}
+h1{font:700 21px var(--fh);margin:4px 0 0;letter-spacing:.05em}h1 b{color:var(--cy);text-shadow:0 0 14px rgba(61,231,255,.7)}
+h2{font:600 16px var(--fh);margin:0 0 10px;color:var(--cy)}
+.px{font:600 48px/1 var(--fh);margin:8px 0 2px;color:var(--au);text-shadow:0 0 24px rgba(255,198,90,.5);font-variant-numeric:tabular-nums}
+.glass{position:relative;background:var(--panel);border:1px solid var(--ln);border-radius:14px;padding:14px;margin:12px 0;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.glass::before,.glass::after{content:"";position:absolute;width:15px;height:15px;border:2px solid var(--cy);opacity:.85;pointer-events:none}
+.glass::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-top-left-radius:14px}
+.glass::after{bottom:-1px;right:-1px;border-left:0;border-top:0;border-bottom-right-radius:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;color:var(--mu);font-size:13px}.row b{color:var(--tx);font-weight:600}
+.warn{background:rgba(255,92,138,.12);border:1px solid rgba(255,92,138,.5);border-radius:10px;padding:9px 11px;font-size:13px;margin:10px 0}
+.f{color:var(--mu);font-size:12px;margin:8px 0 0}
+canvas{width:100%;display:block;border-radius:10px;background:rgba(3,8,18,.7)}
+button,input,select,textarea{font:inherit;color:var(--tx);border-radius:10px;border:1px solid var(--ln);background:rgba(5,12,26,.8);padding:10px 12px;width:100%;margin:5px 0}
+button{width:auto;cursor:pointer;background:rgba(61,231,255,.1);border-color:rgba(61,231,255,.5);font-family:var(--fh);font-weight:600;box-shadow:0 0 14px rgba(61,231,255,.12)}
+button.on{background:rgba(61,231,255,.28);box-shadow:0 0 18px rgba(61,231,255,.4)}
+button.dn{border-color:rgba(255,92,138,.6);background:rgba(255,92,138,.1)}button.dn.on{background:rgba(255,92,138,.3);box-shadow:0 0 18px rgba(255,92,138,.4)}
+.seg{display:flex;gap:6px;margin:4px 0 8px}.seg button{flex:1;margin:0;padding:8px 4px;font-size:13px}
+label{display:block;color:var(--mu);font-size:12px;margin-top:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.k{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.k div{background:rgba(5,12,26,.7);border:1px solid var(--ln);border-radius:10px;padding:9px 4px;text-align:center;font-size:11px;color:var(--mu)}.k b{display:block;font:600 19px var(--fh);color:var(--tx)}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px 4px;border-bottom:1px solid rgba(61,231,255,.12);text-align:left}th{color:var(--mu);font-weight:500}
+.pos{color:var(--up)}.neg{color:var(--dn)}
+.bar{position:relative;height:8px;background:rgba(255,255,255,.07);border-radius:4px}.bar i{position:absolute;top:0;height:8px;border-radius:4px}
+.ring{width:108px;height:108px;border-radius:50%;display:grid;place-items:center;position:relative;flex:none;background:conic-gradient(var(--c) calc(var(--p)*1%),rgba(255,255,255,.08) 0);box-shadow:0 0 26px var(--g)}
+.ring::before{content:"";position:absolute;inset:9px;border-radius:50%;background:#071122}.ring div{position:relative;text-align:center;font:600 28px var(--fh);line-height:1}.ring small{display:block;font:500 11px system-ui;color:var(--mu);margin-top:2px}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:rgba(5,10,20,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--ln);z-index:5}
+.nav button{flex:1;max-width:140px;margin:0;background:transparent;border-color:transparent;box-shadow:none;color:var(--mu);font-size:12px;padding:10px 3px}
+.nav button.on{color:var(--cy);border-color:rgba(61,231,255,.5);background:rgba(61,231,255,.12);box-shadow:0 0 16px rgba(61,231,255,.3)}
+.chip{display:inline-block;margin:3px 4px 3px 0;padding:7px 10px;border-radius:99px;border:1px solid var(--ln);font-size:13px;cursor:pointer;background:rgba(5,12,26,.7)}.chip.on{border-color:var(--cy);background:rgba(61,231,255,.2);box-shadow:0 0 12px rgba(61,231,255,.3)}
+.lv{display:grid;grid-template-columns:10px 1fr auto auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(61,231,255,.1);font-size:14px}.lv i{width:10px;height:10px;border-radius:50%;display:block}
+@media(prefers-reduced-motion:no-preference){.px{animation:glow 4s ease-in-out infinite}@keyframes glow{50%{text-shadow:0 0 34px rgba(255,198,90,.75)}}}
+
+.tt{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(61,231,255,.12);cursor:pointer}
+.tt small{color:var(--mu);font-size:12px}
+.k3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}.k3 div{background:rgba(5,12,26,.7);border:1px solid var(--ln);border-radius:10px;padding:9px 4px;text-align:center;font-size:11px;color:var(--mu)}.k3 b{display:block;font:600 17px var(--fh);color:var(--tx)}
+</style></head>
+<body>
+<h1>TRADE <b>LOG</b></h1>
+<p class="f" style="margin:2px 0 0">Deník obchodů · verze v26</p>
+<div id="err" class="warn" style="display:none"></div>
+<section id="v0" style="display:none"><div class="glass"><h2>Začínáme</h2><p class="f" style="margin-top:0">Zadej počáteční kapitál a měsíční cíl. Obojí pak jde změnit v Nastavení.</p>
+<label>Počáteční kapitál ($)</label><input id="s0c" type="number" inputmode="decimal" placeholder="10000">
+<label>Měsíční cíl (%)</label><input id="s0g" type="number" inputmode="decimal" step="0.1" placeholder="5">
+<button id="s0b">Začít</button><div id="s0m"></div></div></section>
+<section id="v1" style="display:none">
+<div class="glass"><div style="display:flex;gap:14px;align-items:center"><div class="ring" id="mr" style="--p:0;--c:#3de7ff;--g:#3de7ff55"><div>0 %<small>cíle měsíce</small></div></div><div style="flex:1"><div class="f" style="margin:0">Zůstatek</div><div class="px" id="bal" style="font-size:34px">—</div><div id="bal2" class="row"></div></div></div><div id="mg" class="f"></div></div>
+<div class="glass" id="lvl"></div>
+<div class="glass"><h2>Vývoj kapitálu</h2><canvas id="eq"></canvas></div>
+<div class="glass" id="cal"></div>
+<div class="glass" id="hk"></div>
+<div class="glass" id="bdg"></div>
+</section>
+<section id="v2" style="display:none">
+<div class="glass"><h2 id="ft">Nový obchod</h2><div id="lw"></div>
+<div class="seg"><button id="iX" class="on">XAUUSD</button><button id="iD">DJCUSD</button></div>
+<label>Velikost pozice (loty)</label><input id="tl" type="number" inputmode="decimal" step="any">
+<div class="g2"><div><label>Otevření (cena)</label><input id="to" type="number" inputmode="decimal" step="any"></div><div><label>Uzavření (cena)</label><input id="tc" type="number" inputmode="decimal" step="any"></div></div>
+<div class="g2"><div><label>Stop loss</label><input id="ts" type="number" inputmode="decimal" step="any"></div><div><label>Take profit</label><input id="tp" type="number" inputmode="decimal" step="any"></div></div>
+<label>Poplatek obchodu ($, volitelné)</label><input id="tf" type="number" inputmode="decimal" step="any" placeholder="0">
+<div class="g2"><div><label>Čas otevření</label><input id="ta" type="datetime-local"></div><div><label>Čas uzavření</label><input id="tz" type="datetime-local"></div></div>
+<label>Setup</label><select id="tsu"></select>
+<label>Emoce při obchodu</label><div id="em"></div>
+<label>Dodržená pravidla před vstupem</label><div id="trl"></div>
+<label>Poznámka</label><textarea id="tn" rows="2"></textarea>
+<div id="pv"></div>
+<div style="display:flex;gap:8px"><button id="tb">Uložit obchod</button><button id="tx" class="dn" style="display:none">Zrušit úpravu</button></div><div id="tm"></div></div>
+<div class="glass"><h2>Poslední obchody</h2><div id="tlst"></div></div>
+</section>
+<section id="v3" style="display:none"><div id="sx"></div></section>
+<section id="v4" style="display:none"><div id="wk"></div></section>
+<section id="v5" style="display:none">
+<div class="glass"><h2>Nastavení</h2>
+<label>Počáteční kapitál ($)</label><input id="nc" type="number" inputmode="decimal">
+<label>Měsíční cíl (%)</label><input id="ng" type="number" inputmode="decimal" step="0.1">
+<label>Poplatek na 1 lot ($, předvyplní se u obchodu)</label><input id="nf" type="number" inputmode="decimal" step="any">
+<label>Denní limit ztráty (% kapitálu na začátku dne, 0 = vypnuto)</label><input id="nl" type="number" inputmode="decimal" step="0.1">
+<div class="g2"><div><label>XAUUSD: $ na bod a lot</label><input id="nx" type="number" inputmode="decimal" step="any"></div><div><label>DJCUSD: $ na bod a lot</label><input id="nd" type="number" inputmode="decimal" step="any"></div></div>
+<label>Vlastní pravidla před vstupem (jedno na řádek)</label><textarea id="nr" rows="5"></textarea>
+<label>Setupy (jeden na řádek)</label><textarea id="nu" rows="5"></textarea>
+<button id="ns">Uložit nastavení</button><div id="nm"></div>
+<p class="f">Hodnota bodu závisí na brokerovi. U zlata bývá 1 lot = 100 oz, tedy 100 $ na 1 $ pohybu ceny. U indexů se liší, ověř si ji ve specifikaci kontraktu. Časy se zadávají a zobrazují v pražském čase. Seance: Asia 22:00 až 9:00, Londýn 9:00 až 14:30, New York 14:30 až 22:00.</p></div>
+<div class="glass"><h2>Záloha dat</h2><p class="f" style="margin-top:0">Data jsou uložená jen v tomto prohlížeči. Pravidelně je zálohuj.</p><button id="bx">Zkopírovat zálohu</button><label>Obnovit ze zálohy (vlož text zálohy)</label><textarea id="bi" rows="2"></textarea><button id="br">Obnovit</button><div id="bm" class="f"></div><button id="bd" class="dn" style="margin-top:12px">Smazat všechna data</button></div>
+</section>
+<nav class="nav" id="nav"><button id="n1">Přehled</button><button id="n2">Obchod</button><button id="n3">Statistiky</button><button id="n4">Týden</button><button id="n5">Nastavení</button></nav>
+<script>
+window.addEventListener('error',e=>{const b=document.getElementById('err');if(b){b.style.display='block';b.textContent='Chyba aplikace: '+e.message+' (řádek '+e.lineno+')'}});
+window.addEventListener('unhandledrejection',e=>{const b=document.getElementById('err');if(b){b.style.display='block';b.textContent='Chyba aplikace: '+(e.reason&&e.reason.message||e.reason)}});
+const $=i=>document.getElementById(i);
+const S={g(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},s(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const N=x=>parseFloat(String(x).replace(',','.')),mean=r=>r.length?r.reduce((a,b)=>a+b,0)/r.length:0;
+const usd=(v,s)=>(s&&v>0?'+':v<0?'−':'')+Math.abs(v).toLocaleString('cs',{minimumFractionDigits:2,maximumFractionDigits:2})+' $';
+const pc=v=>(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(1)+' %',cc=v=>v>0?'pos':v<0?'neg':'';
+const fd=ms=>{const m=Math.round(ms/6e4);return m<60?m+' min':m<1440?Math.floor(m/60)+' h '+(m%60)+' min':Math.floor(m/1440)+' d '+Math.floor(m%1440/60)+' h'};
+const DEF=()=>({cap:0,goal:0,fee:0,dl:0,rules:['Obchod je po trendu','Vstup je na úrovni','SL a TP mám nastavené před vstupem','Riziko je v plánu','Jsem v klidu'],setups:['Odraz CVD od nuly','EMA9 po pullbacku','Průraz','Obchod na úrovni','Jiný'],pv:{XAUUSD:100,DJCUSD:1}});
+let REV=S.g('tjrev',{}),CALM=pp0(),WK='',RUL=[];function pp0(){return new Date().toISOString().slice(0,7)}
+let FT=0;let CFG=Object.assign(DEF(),S.g('tjcfg',{})),T=S.g('tj2',[]),INS='XAUUSD',EMO=[],EDIT=null;
+const EM=['Klid','Sebevědomí','Disciplína','Trpělivost','Nejistota','Strach','Chamtivost','FOMO','Netrpělivost','Euforie','Vztek / pomsta','Únava'];
+/* Čas v Praze */
+const PF=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Prague',hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+function pp(t){const p={};PF.formatToParts(new Date(t)).forEach(x=>p[x.type]=x.value);return{d:p.year+'-'+p.month+'-'+p.day,m:p.year+'-'+p.month,h:+p.hour,mi:+p.minute}}
+function p2u(s){const m=s.match(/(\d+)-(\d+)-(\d+)T(\d+):(\d+)/);if(!m)return NaN;const u=Date.UTC(+m[1],m[2]-1,+m[3],+m[4],+m[5]),p={};PF.formatToParts(new Date(u)).forEach(x=>p[x.type]=x.value);return u-(Date.UTC(+p.year,p.month-1,+p.day,+p.hour,+p.minute)-u)}
+const dtv=t=>{const q=pp(t);return q.d+'T'+String(q.h).padStart(2,'0')+':'+String(q.mi).padStart(2,'0')};
+const sess=t=>{const q=pp(t),m=q.h*60+q.mi;return m>=1320||m<540?'Asia':m<870?'Londýn':'New York'};
+const dstr=t=>new Date(t).toLocaleString('cs',{timeZone:'Europe/Prague',day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'});
+/* Výpočet jednoho obchodu: směr se pozná podle SL (SL pod vstupem = long) */
+function calc(x){const L=x.sl<x.o,d=L?1:-1,pv=CFG.pv[x.ins],risk=Math.abs(x.o-x.sl)*x.lots*pv,gross=(x.c-x.o)*d*x.lots*pv,fee=x.fee||0,pnl=gross-fee;
+  return{L,gross,fee,pnl,risk,R:pnl/risk,rr:Math.abs(x.tp-x.o)/Math.abs(x.o-x.sl),dur:x.tc-x.to,sess:sess(x.to)}}
+function check(x){if(!(x.lots>0&&x.o>0&&x.c>0&&x.sl>0&&x.tp>0))return'Vyplň velikost pozice, otevření, SL, TP a uzavírací cenu.';if(x.sl===x.o)return'SL se nesmí rovnat ceně otevření.';
+  if(x.sl<x.o?x.tp<=x.o:x.tp>=x.o)return'TP je na špatné straně ceny otevření (směr se pozná podle SL).';if(!(x.tc>x.to))return'Čas uzavření musí být po čase otevření.';return''}
+/* Statistiky */
+function st(L){const n=L.length,W=L.filter(t=>t.pnl>0),Ls=L.filter(t=>t.pnl<0),gp=W.reduce((s,t)=>s+t.pnl,0),gl=-Ls.reduce((s,t)=>s+t.pnl,0),P=L.map(t=>t.pnl);
+  return{n,w:W.length,l:Ls.length,wr:n?W.length/n:0,gp,gl,pf:gl?gp/gl:(gp?Infinity:0),aw:W.length?gp/W.length:0,al:Ls.length?-gl/Ls.length:0,tot:gp-gl,avg:n?(gp-gl)/n:0,
+    pay:W.length&&Ls.length?(gp/W.length)/(gl/Ls.length):0,best:n?Math.max(...P):0,worst:n?Math.min(...P):0,R:mean(L.map(t=>t.R)),rr:mean(L.map(t=>t.rr)),dur:mean(L.map(t=>t.dur))}}
+const grp=(L,kf)=>{const m={};L.slice().sort((a,b)=>a.tc-b.tc).forEach(t=>{const k=kf(t);(m[k]=m[k]||[]).push(t)});return m};
+const sorted=()=>T.slice().sort((a,b)=>a.tc-b.tc);
+function eqPts(){const L=sorted();let e=CFG.cap;const p=[{t:null,v:e}];L.forEach(t=>{e+=t.pnl;p.push({t:t.tc,v:e})});return p}
+function monthInfo(mk){const L=sorted(),before=L.filter(t=>pp(t.tc).m<mk),start=CFG.cap+before.reduce((s,t)=>s+t.pnl,0),M=L.filter(t=>pp(t.tc).m===mk),pnl=M.reduce((s,t)=>s+t.pnl,0);return{start,pnl,pct:start>0?pnl/start*100:0,n:M.length}}
+function dayStreak(){const D=grp(T,t=>pp(t.tc).d),ks=Object.keys(D).sort(),v=ks.map(k=>D[k].reduce((s,t)=>s+t.pnl,0));if(!v.length)return{n:0,s:0};const sg=Math.sign(v[v.length-1]);if(!sg)return{n:0,s:0};let n=0;for(let i=v.length-1;i>=0&&Math.sign(v[i])===sg;i--)n++;return{n,s:sg}}
+function drawEq(){const c=$('eq'),x=c.getContext('2d'),W=700,H=300;c.width=W;c.height=H;const p=eqPts(),vs=p.map(q=>q.v),lo0=Math.min(...vs,CFG.cap),hi0=Math.max(...vs,CFG.cap),pad=(hi0-lo0||CFG.cap*.02||1)*.15,lo=lo0-pad,hi=hi0+pad,Y=v=>14+(hi-v)/(hi-lo)*(H-36),X=i=>20+i/(Math.max(p.length-1,1))*(W-100);
+  x.font='16px system-ui';x.fillStyle='#7f9bb8';x.strokeStyle='rgba(255,198,90,.6)';x.setLineDash([6,6]);x.beginPath();x.moveTo(0,Y(CFG.cap));x.lineTo(W-76,Y(CFG.cap));x.stroke();x.setLineDash([]);x.fillStyle='#ffc65a';x.fillText('start',W-70,Y(CFG.cap)+5);
+  if(p.length>1){const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(61,231,255,.28)');g.addColorStop(1,'rgba(61,231,255,0)');x.beginPath();p.forEach((q,i)=>i?x.lineTo(X(i),Y(q.v)):x.moveTo(X(i),Y(q.v)));x.lineTo(X(p.length-1),H-22);x.lineTo(X(0),H-22);x.fillStyle=g;x.fill();
+    x.strokeStyle='#3de7ff';x.shadowColor='#3de7ff';x.shadowBlur=12;x.lineWidth=3;x.beginPath();p.forEach((q,i)=>i?x.lineTo(X(i),Y(q.v)):x.moveTo(X(i),Y(q.v)));x.stroke();x.shadowBlur=0}
+  const l=p.length-1,lc=vs[l]>=CFG.cap?'#38f0b0':'#ff5c8a';x.fillStyle=lc;x.shadowColor=lc;x.shadowBlur=14;x.beginPath();x.arc(X(l),Y(vs[l]),6,0,6.283);x.fill();x.shadowBlur=0;x.fillText(Math.round(vs[l]).toLocaleString('cs')+' $',Math.min(X(l)-30,W-120),Y(vs[l])-12);
+  x.fillStyle='#7f9bb8';x.fillText(Math.round(hi0).toLocaleString('cs'),0,12)}
+/* Vykreslení */
+function home(){const p=eqPts(),bal=p[p.length-1].v,tot=bal-CFG.cap,mk=pp(Date.now()).m,mi=monthInfo(mk),td=pp(Date.now()).d,today=T.filter(t=>pp(t.tc).d===td).reduce((s,t)=>s+t.pnl,0),sk=dayStreak(),pr=CFG.goal>0?mi.pct/CFG.goal*100:0,col=pr>=100?'#38f0b0':pr>=0?'#3de7ff':'#ff5c8a';
+  $('bal').textContent=Math.round(bal).toLocaleString('cs')+' $';$('bal2').innerHTML=`<span>Celkem <b class="${cc(tot)}">${usd(tot,1)}</b> (${pc(tot/CFG.cap*100)})</span>`;
+  const r=$('mr');r.style.setProperty('--p',Math.max(0,Math.min(100,pr)));r.style.setProperty('--c',col);r.style.setProperty('--g',col+'55');r.innerHTML=`<div>${Math.round(pr)} %<small>cíle měsíce</small></div>`;
+  const left=mi.start*CFG.goal/100-mi.pnl;$('mg').innerHTML=`Tento měsíc: <b class="${cc(mi.pnl)}">${usd(mi.pnl,1)}</b> (${pc(mi.pct)}) z cíle ${CFG.goal} %. ${left>0?'Do cíle zbývá '+usd(left)+'.':'Měsíční cíl je splněn.'}`;
+  $('hk').innerHTML=`<div class="k3"><div><b class="${cc(today)}">${usd(today,1)}</b>dnes</div><div><b>${sk.n?sk.n+' '+(sk.s>0?'zisk.':'ztrát.'):'—'}</b>denní série</div><div><b>${T.length}</b>obchodů</div></div>`;drawEq();calendar();lvlCard();badges();$('hk').innerHTML+=limHtml()}
+function stats(){if(!T.length){$('sx').innerHTML='<div class="glass"><h2>Statistiky</h2><p class="f">Zapiš první obchod. Statistiky se pak počítají samy.</p></div>';return}
+  const a=st(T),L=sorted(),eq=eqPts();let pk=CFG.cap,dd=0,ddp=0;eq.forEach(q=>{pk=Math.max(pk,q.v);const d=pk-q.v;if(d>dd){dd=d;ddp=d/pk*100}});
+  const D=grp(T,t=>pp(t.tc).d),dk=Object.keys(D).sort(),dv=dk.map(k=>D[k].reduce((s,t)=>s+t.pnl,0)),dw=dv.filter(v=>v>0).length,sk=dayStreak();
+  const Mo=grp(T,t=>pp(t.tc).m),mk=Object.keys(Mo).sort().reverse(),k=(b,l,c)=>`<div><b class="${c||''}">${b}</b>${l}</div>`,row=(nm,g)=>{const s=st(g);return `<tr><td>${nm}</td><td>${s.n}</td><td>${Math.round(s.wr*100)} %</td><td class="${cc(s.tot)}">${usd(s.tot,1)}</td><td class="${cc(s.R)}">${s.R.toFixed(2)}</td></tr>`},hdr='<tr><th></th><th>N</th><th>Win</th><th>P&amp;L</th><th>Ø R</th></tr>';
+  const wd=T.filter(t=>t.pnl>0),ld=T.filter(t=>t.pnl<0),bk=[['do 15 min',0,9e5],['15 až 60 min',9e5,36e5],['1 až 4 h',36e5,144e5],['nad 4 h',144e5,1e15]];
+  const emo={};T.forEach(t=>(t.emo||[]).forEach(e=>(emo[e]=emo[e]||[]).push(t)));
+  const mrow=m=>{const i=monthInfo(m),days=grp(Mo[m],t=>pp(t.tc).d),dv2=Object.values(days).map(g=>g.reduce((s,t)=>s+t.pnl,0));return `<tr><td>${m}</td><td class="${cc(i.pnl)}">${usd(i.pnl,1)}</td><td class="${cc(i.pct)}">${pc(i.pct)}</td><td>${Math.round(100*dv2.filter(v=>v>0).length/dv2.length)} %</td><td>${CFG.goal&&i.pct>=CFG.goal?'✓':'✗'}</td></tr>`};
+  const mon=mk.map(m=>monthInfo(m)),mw=mon.filter(i=>i.pnl>0).length;
+  $('sx').innerHTML=`<div class="glass"><h2>Výkon</h2><div class="k">${k(a.n,'obchodů')+k(Math.round(a.wr*100)+' %','míra výher')+k(a.pf===Infinity?'∞':a.pf.toFixed(2),'faktor zisku')+k(a.pay?a.pay.toFixed(2):'—','poměr zisk/ztráta')}</div>
+   <div class="k" style="margin-top:8px">${k(usd(a.aw),'průměrný zisk','pos')+k(usd(a.al),'průměrná ztráta','neg')+k(usd(a.best,1),'největší zisk','pos')+k(usd(a.worst,1),'největší ztráta','neg')}</div>
+   <div class="k" style="margin-top:8px">${k(usd(a.tot,1),'celkem',cc(a.tot))+k(usd(a.avg,1),'Ø na obchod',cc(a.avg))+k(a.rr.toFixed(2),'Ø plán. RR')+k(a.R.toFixed(2),'Ø dosažené R',cc(a.R))}</div>
+   <div class="k" style="margin-top:8px">${k(usd(-dd),'max. propad','neg')+k(ddp.toFixed(1)+' %','propad v %','neg')+k(wd.length,'ziskových')+k(ld.length,'ztrátových')}</div>
+   <div class="k3"><div><b class="neg">${usd(-T.reduce((s,t)=>s+(t.fee||0),0))}</b>poplatky celkem</div><div><b class="${cc(T.reduce((s,t)=>s+(t.gross??t.pnl),0))}">${usd(T.reduce((s,t)=>s+(t.gross??t.pnl),0),1)}</b>hrubý výsledek</div><div><b>${usd(-mean(T.map(t=>t.fee||0)))}</b>Ø poplatek</div></div>
+   ${a.n<30?`<p class="f">Zatím jen ${a.n} obchodů. Čísla jsou hodně nejistá, dokud jich nemáš aspoň 30 až 100.</p>`:''}</div>
+   <div class="glass"><h2>Dny</h2><div class="k3"><div><b>${dk.length?Math.round(100*dw/dk.length):0} %</b>ziskových dnů</div><div><b class="${sk.s>0?'pos':'neg'}">${sk.n?sk.n+(sk.s>0?' zisk.':' ztrát.'):'—'}</b>aktuální série</div><div><b>${dk.length}</b>dnů</div></div>
+   <div class="k3"><div><b class="pos">${usd(Math.max(...dv),1)}</b>nejlepší den</div><div><b class="neg">${usd(Math.min(...dv),1)}</b>nejhorší den</div><div><b class="${cc(mean(dv))}">${usd(mean(dv),1)}</b>Ø den</div></div></div>
+   <div class="glass"><h2>Měsíce</h2><p class="f" style="margin-top:0">Ziskových měsíců: ${mw} z ${mon.length}. Cíl ${CFG.goal} % měsíčně.</p><table><tr><th>Měsíc</th><th>P&amp;L</th><th>%</th><th>Zisk. dny</th><th>Cíl</th></tr>${mk.map(mrow).join('')}</table></div>
+   <div class="glass"><h2>Doba obchodu</h2><div class="k3"><div><b>${fd(a.dur)}</b>průměr</div><div><b class="pos">${wd.length?fd(mean(wd.map(t=>t.dur))):'—'}</b>zisková</div><div><b class="neg">${ld.length?fd(mean(ld.map(t=>t.dur))):'—'}</b>ztrátová</div></div>
+   <table>${hdr}${bk.map(([n,lo,hi])=>{const g=T.filter(t=>t.dur>=lo&&t.dur<hi);return g.length?row(n,g):''}).join('')}</table></div>
+   <div class="glass"><h2>Seance</h2><table>${hdr}${['Asia','Londýn','New York'].map(s=>{const g=T.filter(t=>t.sess===s);return g.length?row(s,g):`<tr><td>${s}</td><td colspan="4" class="f">žádné obchody</td></tr>`}).join('')}</table></div>
+   <div class="glass"><h2>Instrumenty</h2><table>${hdr}${['XAUUSD','DJCUSD'].map(s=>{const g=T.filter(t=>t.ins===s);return g.length?row(s,g):''}).join('')}<tr><td colspan="5" class="f">Long vs short níže</td></tr>${row('Long',T.filter(t=>t.L))}${row('Short',T.filter(t=>!t.L))}</table></div>
+   <div class="glass"><h2>Emoce</h2>${Object.keys(emo).length?`<table>${hdr}${Object.keys(emo).sort((x,y)=>emo[y].length-emo[x].length).map(e=>row(e,emo[e])).join('')}</table>`:'<p class="f">U obchodů zatím nejsou zadané emoce.</p>'}</div>`}
+
+/* ===== Levely, odznaky, motivace ===== */
+const LV=[['Nováček',0],['Učeň',100],['Pozorovatel',250],['Disciplinovaný',500],['Stratég',900],['Ostřílený',1400],['Mistr trpělivosti',2100],['Mistr rizika',3000],['Zlatý trader',4200],['Legenda',6000]];
+const QT=['Dobrý obchod není ten, který vydělal, ale ten, který dodržel plán.','Kapitál chrání stop loss, ne naděje.','Nejlepší obchod dne je někdy ten, který neotevřeš.','Konzistence vyhrává nad jedním velkým obchodem.','Ztráta v rámci plánu je cena za podnikání, ne selhání.','Zapiš obchod, dokud je emoce čerstvá. Z deníku se učíš nejvíc.','Pomalu a pravidelně. Měsíční cíl se skládá z klidných dnů.','Když nevíš, zmenši pozici. Když stále nevíš, počkej.','Nehoň ztrátu. Trh tu bude i zítra.','Disciplína je tvoje skutečná výhoda.'];
+function logStreak(){const ks=Object.keys(grp(T,t=>pp(t.tc).d)).sort();if(!ks.length)return 0;const day=k=>Date.UTC(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8,10))/864e5,now=day(pp(Date.now()).d),e=day(ks[ks.length-1]);if(now-e>1)return 0;let n=0;for(let i=ks.length-1;i>=0;i--){if(day(ks[i])===e-n)n++;else break}return n}
+function xpInfo(){const L=sorted(),per={};let xp=0;L.forEach(t=>{const d=pp(t.tc).d;per[d]=(per[d]||0)+1;if(per[d]<=3){xp+=10;if((t.emo||[]).length)xp+=5;if(t.note)xp+=5;if(t.R>=-1.05)xp+=10;if((t.rt||[]).length&&t.rl.length===t.rt.length)xp+=10}});
+  const D=grp(T,t=>pp(t.tc).d),dk=Object.keys(D).sort(),dv=dk.map(k=>D[k].reduce((s,t)=>s+t.pnl,0));xp+=15*dv.filter(v=>v>0).length;
+  const Mo=grp(T,t=>pp(t.tc).m);let goals=0;Object.keys(Mo).forEach(m=>{if(CFG.goal>0&&monthInfo(m).pct>=CFG.goal)goals++});xp+=100*goals;
+  let i=0;LV.forEach((l,k)=>{if(xp>=l[1])i=k});let mg=0,c=0;dv.forEach(v=>{c=v>0?c+1:0;mg=Math.max(mg,c)});let ok=0,run=0;L.forEach(t=>{run=t.R>=-1.05?run+1:0;ok=Math.max(ok,run)});
+  return{xp,i,goals,mg,ok,calm:T.filter(t=>(t.emo||[]).some(e=>['Klid','Disciplína','Trpělivost'].includes(e))).length}}
+function lvlCard(){const x=xpInfo(),cur=LV[x.i],nx=LV[x.i+1],pct=nx?(x.xp-cur[1])/(nx[1]-cur[1])*100:100,td=pp(Date.now()).d,today=T.filter(t=>pp(t.tc).d===td),tp=today.reduce((s,t)=>s+t.pnl,0),mi=monthInfo(pp(Date.now()).m),sk=dayStreak();
+  let msg=QT[Math.floor(Date.now()/864e5)%QT.length];
+  if(today.length>=3&&tp<0)msg='Dnes máš za sebou víc obchodů a jsi v mínusu. Zvaž konec dne, hon na návrat je nejdražší chyba.';
+  else if(CFG.goal>0&&mi.pct>=CFG.goal)msg='Měsíční cíl je splněn. Chraň ho: menší pozice a jen nejlepší setupy.';
+  else if(sk.s>0&&sk.n>=2)msg=sk.n+' ziskové dny v řadě. Drž stejné riziko a stejný plán, nezvedej pozici.';
+  else if(today.length&&tp<0)msg='Ztráta dnes je v pořádku, pokud jsi dodržel plán. Zapiš emoce a jdi dál.';
+  $('lvl').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0">Level ${x.i+1} · ${cur[0]}</h2><b style="font:600 18px var(--fh);color:var(--au)">${x.xp} XP</b></div><div class="bar" style="height:10px;margin:10px 0 6px"><i style="left:0;width:${Math.min(100,pct)}%;height:10px;background:linear-gradient(90deg,#3de7ff,#a58bff);box-shadow:0 0 12px #3de7ff"></i></div><div class="f" style="margin:0">${nx?'Do levelu „'+nx[0]+'“ chybí '+(nx[1]-x.xp)+' XP':'Nejvyšší level dosažen'}</div><p style="margin:12px 0 4px">${msg}</p><p class="f">XP dostáváš za vedení deníku, vyplněné emoce a poznámku, ztrátu v rámci SL a ziskové dny, 100 XP za splněný měsíční cíl. Za velikost zisku ne, ať tě to nelákne přeobchodovat. Počítají se max. 3 obchody denně.</p>`}
+function badges(){const x=xpInfo(),a=st(T),B=[['První obchod',T.length>=1,'Zapiš 1 obchod'],['10 obchodů',T.length>=10,'Zapiš 10 obchodů'],['50 obchodů',T.length>=50,'Zapiš 50 obchodů'],['100 obchodů',T.length>=100,'Zapiš 100 obchodů'],
+   ['Týden zápisů',logStreak()>=7,'Zapisuj 7 dní v řadě'],['Cíl měsíce',x.goals>0,'Splň měsíční cíl'],['Ochránce kapitálu',x.ok>=10,'10 obchodů v řadě se ztrátou max. do SL'],['Klidná hlava',x.calm>=10,'10 obchodů s emocí Klid, Disciplína nebo Trpělivost'],
+   ['Tři zelené dny',x.mg>=3,'3 ziskové dny v řadě'],['Disciplína pravidel',T.filter(t=>(t.rt||[]).length&&t.rl.length===t.rt.length).length>=10,'10 obchodů se všemi pravidly'],['Faktor zisku 2+',a.n>=30&&a.pf>=2,'Po 30 obchodech faktor zisku nad 2']];
+  $('bdg').innerHTML=`<h2>Odznaky ${B.filter(b=>b[1]).length}/${B.length}</h2>`+B.map(b=>`<span class="chip ${b[1]?'on':''}" style="${b[1]?'':'opacity:.45'}">${b[1]?'★ ':'☆ '}${b[0]}</span>`).join('')+'<p class="f">Zamčené: '+B.filter(b=>!b[1]).map(b=>b[0]+' ('+b[2]+')').join(', ')+'</p>'}
+function emChips(){$('em').innerHTML=EM.map(e=>`<span class="chip ${EMO.includes(e)?'on':''}" data-e="${e}">${e}</span>`).join('')}
+function fld(){const g=i=>N($(i).value);return{ins:INS,fee:g('tf')||0,lots:g('tl'),o:g('to'),c:g('tc'),sl:g('ts'),tp:g('tp'),to:p2u($('ta').value),tc:p2u($('tz').value)}}
+function prev(){const x=fld(),e=check(x);if(e){$('pv').innerHTML=`<p class="f">${e}</p>`;return null}const r=calc(x);
+  $('pv').innerHTML=`<div class="k" style="margin:10px 0"><div><b class="${r.L?'pos':'neg'}">${r.L?'LONG':'SHORT'}</b>směr</div><div><b class="${cc(r.pnl)}">${usd(r.pnl,1)}</b>výsledek</div><div><b class="${cc(r.R)}">${r.R.toFixed(2)}</b>dosažené R</div><div><b>${r.rr.toFixed(2)}</b>plánované RR</div></div><p class="f">Seance: ${r.sess} · doba obchodu ${fd(r.dur)} · riziko ${usd(r.risk)} · hrubý výsledek ${usd(r.gross,1)}, poplatek ${usd(-r.fee)}</p>`;return{x,r}}
+function tlist(){$('tlst').innerHTML=sorted().reverse().slice(0,15).map(t=>`<div class="tt" data-id="${t.id}"><span data-id="${t.id}">${dstr(t.to)} · ${t.ins} · ${t.L?'long':'short'} · ${t.lots} lot<br><small data-id="${t.id}">${t.sess} · ${fd(t.dur)}${(t.emo||[]).length?' · '+t.emo.join(', '):''}</small></span><b class="${cc(t.pnl)}" data-id="${t.id}">${usd(t.pnl,1)}</b><button class="dn" data-del="${t.id}" style="padding:4px 10px;margin:0">×</button></div>`).join('')||'<p class="f">Zatím žádné obchody.</p>'}
+const esc=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const MN=['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'],shiftM=(k,d)=>{let [y,m]=k.split('-').map(Number);m+=d;if(m<1){m=12;y--}if(m>12){m=1;y++}return y+'-'+String(m).padStart(2,'0')};
+const wkey=t=>{const q=pp(t).d.split('-').map(Number),u=Date.UTC(q[0],q[1]-1,q[2]),dow=(new Date(u).getUTCDay()+6)%7;return new Date(u-dow*864e5).toISOString().slice(0,10)};
+WK=wkey(Date.now());
+const HDR='<tr><th></th><th>N</th><th>Win</th><th>P&amp;L</th><th>Ø R</th></tr>',rowH=(nm,g)=>{const s=st(g);return `<tr><td>${nm}</td><td>${s.n}</td><td>${Math.round(s.wr*100)} %</td><td class="${cc(s.tot)}">${usd(s.tot,1)}</td><td class="${cc(s.R)}">${s.R.toFixed(2)}</td></tr>`};
+/* 1. Kalendář zisků */
+function calendar(){const [y,m]=CALM.split('-').map(Number),days=new Date(Date.UTC(y,m,0)).getUTCDate(),first=(new Date(Date.UTC(y,m-1,1)).getUTCDay()+6)%7,D=grp(T,t=>pp(t.tc).d),vals={};let mx=1,tot=0,gd=0,rd=0;
+  for(let d=1;d<=days;d++){const k=CALM+'-'+String(d).padStart(2,'0');if(D[k]){const v=D[k].reduce((s,t)=>s+t.pnl,0);vals[d]=v;mx=Math.max(mx,Math.abs(v));tot+=v;if(v>0)gd++;else if(v<0)rd++}}
+  let cells=['Po','Út','St','Čt','Pá','So','Ne'].map(n=>`<div class="f" style="text-align:center;margin:0">${n}</div>`).join('');for(let i=0;i<first;i++)cells+='<div></div>';
+  for(let d=1;d<=days;d++){const v=vals[d],c=v===undefined?'rgba(255,255,255,.04)':v>0?`rgba(56,240,176,${(.15+.55*Math.abs(v)/mx).toFixed(2)})`:v<0?`rgba(255,92,138,${(.15+.55*Math.abs(v)/mx).toFixed(2)})`:'rgba(127,155,184,.25)';
+    cells+=`<div style="background:${c};border-radius:8px;padding:5px 2px;text-align:center;min-height:46px;font-size:11px;border:1px solid rgba(61,231,255,.12)"><span style="color:var(--mu)">${d}</span><br><b style="font-size:12px">${v===undefined?'':(v>0?'+':'')+Math.round(v)}</b></div>`}
+  $('cal').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><button id="cp" style="margin:0;padding:6px 12px">◀</button><h2 style="margin:0">${MN[m-1]} ${y}</h2><button id="cn" style="margin:0;padding:6px 12px">▶</button></div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:10px 0">${cells}</div><p class="f" style="margin:0">Měsíc: <b class="${cc(tot)}">${usd(tot,1)}</b> · ziskových dnů ${gd}, ztrátových ${rd}</p>`;
+  $('cp').onclick=()=>{CALM=shiftM(CALM,-1);calendar()};$('cn').onclick=()=>{CALM=shiftM(CALM,1);calendar()}}
+/* 2. Denní limit ztráty */
+function limitAt(day,before,ex){const L=sorted().filter(t=>t.id!==ex),start=CFG.cap+L.filter(t=>pp(t.tc).d<day).reduce((s,t)=>s+t.pnl,0),lim=CFG.dl>0?start*CFG.dl/100:0,pnl=L.filter(t=>pp(t.tc).d===day&&t.tc<=before).reduce((s,t)=>s+t.pnl,0);return{lim,pnl,hit:lim>0&&pnl<=-lim}}
+function limHtml(){if(!(CFG.dl>0))return'';const i=limitAt(pp(Date.now()).d,Date.now()+1e9);return `<div class="f" style="margin:10px 0 4px">Denní limit ztráty: ${usd(Math.min(0,i.pnl))} z ${usd(-i.lim)}</div><div class="bar" style="height:8px"><i style="left:0;height:8px;width:${Math.min(100,Math.max(0,-i.pnl)/i.lim*100)}%;background:${i.hit?'#ff5c8a':'#3de7ff'}"></i></div>${i.hit?'<div class="warn">Denní limit je dosažen. Dnes už neotevírej další obchod.</div>':''}`}
+function limWarn(){$('lw').innerHTML=limHtml()}
+/* 3. a 4. Pravidla a setupy */
+function ruleChips(){$('trl').innerHTML=CFG.rules.length?CFG.rules.map((r,i)=>`<span class="chip ${RUL.includes(r)?'on':''}" data-r="${i}">${esc(r)}</span>`).join(''):'<p class="f" style="margin:0">Žádná pravidla. Přidáš je v Nastavení.</p>'}
+function setupSel(v){$('tsu').innerHTML=CFG.setups.map(x=>`<option>${esc(x)}</option>`).join('');if(v)$('tsu').value=v}
+function setupCard(){const m=grp(T,t=>t.su||'Bez setupu');return `<div class="glass"><h2>Setupy</h2><table>${HDR}${Object.keys(m).sort((a,b)=>st(m[b]).tot-st(m[a]).tot).map(k=>rowH(esc(k),m[k])).join('')}</table></div>`}
+function disCard(){const wr=T.filter(t=>(t.rt||[]).length),all=wr.filter(t=>t.rl.length===t.rt.length),part=wr.filter(t=>t.rl.length<t.rt.length),ov=T.filter(t=>t.over),names=[...new Set(wr.flatMap(t=>t.rt))],comp=wr.length?Math.round(100*mean(wr.map(t=>t.rl.length/t.rt.length))):null,
+   av=g=>g.length?mean(g.map(t=>t.R)):null,fx=v=>v===null?'—':v.toFixed(2),cl=v=>v===null?'':cc(v);
+  const rows=names.map(n=>{const w=wr.filter(t=>t.rl.includes(n)),o=wr.filter(t=>t.rt.includes(n)&&!t.rl.includes(n));return `<tr><td>${esc(n)}</td><td>${w.length}</td><td class="${cl(av(w))}">${fx(av(w))}</td><td>${o.length}</td><td class="${cl(av(o))}">${fx(av(o))}</td></tr>`}).join('');
+  return `<div class="glass"><h2>Disciplína a pravidla</h2>${wr.length?`<div class="k3"><div><b>${comp} %</b>průměrné dodržení</div><div><b class="${cl(av(all))}">${fx(av(all))}</b>Ø R, všechna pravidla (${all.length}×)</div><div><b class="${cl(av(part))}">${fx(av(part))}</b>Ø R, ne všechna (${part.length}×)</div></div><table><tr><th>Pravidlo</th><th>S: N</th><th>Ø R</th><th>Bez: N</th><th>Ø R</th></tr>${rows}</table>`:'<p class="f">U obchodů zatím nejsou odškrtnutá žádná pravidla.</p>'}
+   <div class="k3" style="margin-top:10px"><div><b>${ov.length}</b>obchodů po dosažení limitu</div><div><b class="${cc(ov.reduce((s,t)=>s+t.pnl,0))}">${usd(ov.reduce((s,t)=>s+t.pnl,0),1)}</b>jejich výsledek</div><div><b>${CFG.dl?CFG.dl+' %':'vypnuto'}</b>denní limit</div></div></div>`}
+/* 5. Týdenní rekapitulace */
+function week(){const L=T.filter(t=>wkey(t.tc)===WK),a=st(L),end=new Date(Date.parse(WK)+6*864e5).toISOString().slice(0,10),rev=REV[WK]||{},wr=L.filter(t=>(t.rt||[]).length),comp=wr.length?Math.round(100*mean(wr.map(t=>t.rl.length/t.rt.length)))+' %':'—',ov=L.filter(t=>t.over).length,emo={};
+  L.forEach(t=>(t.emo||[]).forEach(e=>emo[e]=(emo[e]||0)+1));const te=Object.keys(emo).sort((x,y)=>emo[y]-emo[x]).slice(0,3).map(e=>e+' ('+emo[e]+'×)').join(', ')||'—',old=Object.keys(REV).sort().reverse().filter(k=>k!==WK).slice(0,4),d2=k=>k.slice(8)+'. '+k.slice(5,7)+'.';
+  $('wk').innerHTML=`<div class="glass"><div style="display:flex;justify-content:space-between;align-items:center"><button id="wp" style="margin:0;padding:6px 12px">◀</button><h2 style="margin:0">Týden ${d2(WK)} až ${d2(end)}</h2><button id="wn" style="margin:0;padding:6px 12px">▶</button></div>
+   ${L.length?`<div class="k" style="margin-top:12px"><div><b>${a.n}</b>obchodů</div><div><b class="${cc(a.tot)}">${usd(a.tot,1)}</b>výsledek</div><div><b>${Math.round(a.wr*100)} %</b>míra výher</div><div><b class="${cc(a.R)}">${a.R.toFixed(2)}</b>Ø R</div></div><div class="k" style="margin-top:8px"><div><b class="pos">${usd(a.best,1)}</b>nejlepší</div><div><b class="neg">${usd(a.worst,1)}</b>nejhorší</div><div><b>${comp}</b>pravidla</div><div><b>${ov}</b>po limitu</div></div><p class="f">Nejčastější emoce: ${esc(te)}</p>`:'<p class="f">V tomto týdnu zatím žádné obchody.</p>'}</div>
+   <div class="glass"><h2>Rekapitulace týdne</h2><label>Co fungovalo?</label><textarea id="wa" rows="3">${esc(rev.a||'')}</textarea><label>Co nefungovalo?</label><textarea id="wb" rows="3">${esc(rev.b||'')}</textarea><label>Co příští týden změním?</label><textarea id="wc" rows="3">${esc(rev.c||'')}</textarea><button id="wsv">Uložit rekapitulaci</button><div id="wm"></div></div>
+   ${old.length?`<div class="glass"><h2>Dřívější rekapitulace</h2>${old.map(k=>`<p class="f"><b style="color:var(--tx)">Týden ${d2(k)}</b><br>Fungovalo: ${esc(REV[k].a||'—')}<br>Nefungovalo: ${esc(REV[k].b||'—')}<br>Změním: ${esc(REV[k].c||'—')}</p>`).join('')}</div>`:''}`;
+  $('wp').onclick=()=>{WK=new Date(Date.parse(WK)-7*864e5).toISOString().slice(0,10);week()};$('wn').onclick=()=>{if(WK<wkey(Date.now())){WK=new Date(Date.parse(WK)+7*864e5).toISOString().slice(0,10);week()}};
+  $('wsv').onclick=()=>{REV[WK]={a:$('wa').value.trim(),b:$('wb').value.trim(),c:$('wc').value.trim()};S.s('tjrev',REV);$('wm').innerHTML='<div class="warn" style="border-color:rgba(61,231,255,.5);background:rgba(61,231,255,.08)">Rekapitulace uložena.</div>'}}
+/* Formulář */
+function resetForm(){EDIT=null;EMO=[];RUL=[];FT=0;['tl','to','tc','ts','tp','tn','tf'].forEach(i=>$(i).value='');const n=Date.now();$('ta').value=dtv(n-18e5);$('tz').value=dtv(n);$('ft').textContent='Nový obchod';$('tb').textContent='Uložit obchod';$('tx').style.display='none';setupSel();emChips();ruleChips();limWarn();prev()}
+function save(){const o=prev();if(!o){$('tm').innerHTML='<div class="warn">Oprav chyby ve formuláři.</div>';return}const lm=limitAt(pp(o.x.to).d,o.x.to,EDIT),t={id:EDIT||Date.now(),...o.x,L:o.r.L,gross:o.r.gross,pnl:o.r.pnl,risk:o.r.risk,R:o.r.R,rr:o.r.rr,dur:o.r.dur,sess:o.r.sess,emo:EMO.slice(),note:$('tn').value.trim(),su:$('tsu').value,rl:RUL.filter(r=>CFG.rules.includes(r)),rt:CFG.rules.slice(),over:lm.hit};
+  T=T.filter(x=>x.id!==EDIT);T.push(t);S.s('tj2',T);$('tm').innerHTML=`<div class="warn" style="border-color:rgba(61,231,255,.5);background:rgba(61,231,255,.08)">Uloženo: ${usd(t.pnl,1)} (${t.R.toFixed(2)} R)${t.over?' · označeno jako obchod po dosažení denního limitu':''}</div>`;resetForm();tlist()}
+function edit(id){const t=T.find(x=>String(x.id)===String(id));if(!t)return;EDIT=t.id;INS=t.ins;EMO=(t.emo||[]).slice();RUL=(t.rl||[]).slice();$('iX').className=INS==='XAUUSD'?'on':'';$('iD').className=INS==='DJCUSD'?'on':'';
+  FT=1;$('tf').value=t.fee||'';$('tl').value=t.lots;$('to').value=t.o;$('tc').value=t.c;$('ts').value=t.sl;$('tp').value=t.tp;$('ta').value=dtv(t.to);$('tz').value=dtv(t.tc);$('tn').value=t.note||'';setupSel(t.su);$('ft').textContent='Úprava obchodu';$('tb').textContent='Uložit změny';$('tx').style.display='';emChips();ruleChips();limWarn();prev();scrollTo(0,0)}
+function settings(){$('nc').value=CFG.cap;$('ng').value=CFG.goal;$('nf').value=CFG.fee||0;$('nl').value=CFG.dl||0;$('nx').value=CFG.pv.XAUUSD;$('nd').value=CFG.pv.DJCUSD;$('nr').value=CFG.rules.join('\n');$('nu').value=CFG.setups.join('\n')}
+function recalcAll(){T=T.map(t=>({...t,...calc(t)}));S.s('tj2',T)}
+function show(n){['v0','v1','v2','v3','v4','v5'].forEach((v,i)=>$(v).style.display=i===n?'':'none');[1,2,3,4,5].forEach(k=>$('n'+k).className=k===n?'on':'');$('nav').style.display=n===0?'none':'';
+  if(n===1)home();if(n===2){if(!$('ta').value)resetForm();else limWarn();tlist()}if(n===3){stats();if(T.length)$('sx').innerHTML+=setupCard()+disCard()}if(n===4)week();if(n===5)settings();scrollTo(0,0)}
+/* Události */
+$('s0b').onclick=()=>{const c=N($('s0c').value),g=N($('s0g').value);if(!(c>0)||!(g>=0)||isNaN(g)){$('s0m').innerHTML='<div class="warn">Zadej kladný kapitál a měsíční cíl v %.</div>';return}CFG.cap=c;CFG.goal=g;S.s('tjcfg',CFG);show(1)};
+[1,2,3,4,5].forEach(k=>$('n'+k).onclick=()=>show(k));
+$('iX').onclick=()=>{INS='XAUUSD';$('iX').className='on';$('iD').className='';prev()};$('iD').onclick=()=>{INS='DJCUSD';$('iD').className='on';$('iX').className='';prev()};
+['to','tc','ts','tp','ta','tz'].forEach(i=>$(i).oninput=prev);
+$('tl').oninput=()=>{if(!FT&&CFG.fee>0)$('tf').value=((N($('tl').value)||0)*CFG.fee).toFixed(2);prev()};$('tf').oninput=()=>{FT=1;prev()};
+$('em').onclick=e=>{const v=e.target.dataset.e;if(v){EMO=EMO.includes(v)?EMO.filter(x=>x!==v):EMO.concat(v);emChips()}};
+$('trl').onclick=e=>{const i=e.target.dataset.r;if(i!==undefined){const r=CFG.rules[i];RUL=RUL.includes(r)?RUL.filter(x=>x!==r):RUL.concat(r);ruleChips()}};
+$('tb').onclick=save;$('tx').onclick=resetForm;
+$('tlst').onclick=e=>{const d=e.target.dataset.del;if(d){if(confirm('Smazat tento obchod?')){T=T.filter(x=>String(x.id)!==d);S.s('tj2',T);tlist()}return}const id=e.target.dataset.id||(e.target.closest('.tt')||{dataset:{}}).dataset.id;if(id)edit(id)};
+$('ns').onclick=()=>{const c=N($('nc').value),g=N($('ng').value),fe=N($('nf').value)||0,dl=N($('nl').value)||0,x=N($('nx').value),d=N($('nd').value);if(!(c>0)||isNaN(g)||fe<0||dl<0||!(x>0)||!(d>0)){$('nm').innerHTML='<div class="warn">Zkontroluj hodnoty, kapitál a hodnoty bodu musí být kladné.</div>';return}
+  const ln=id=>$(id).value.split('\n').map(x=>x.trim()).filter(Boolean),su=ln('nu');CFG={...CFG,cap:c,goal:g,fee:fe,dl,rules:ln('nr'),setups:su.length?su:['Jiný'],pv:{XAUUSD:x,DJCUSD:d}};S.s('tjcfg',CFG);recalcAll();$('nm').innerHTML='<div class="warn" style="border-color:rgba(61,231,255,.5);background:rgba(61,231,255,.08)">Uloženo a všechny obchody přepočítány.</div>'};
+$('bx').onclick=async()=>{const j=JSON.stringify({cfg:CFG,t:T,rev:REV});try{await navigator.clipboard.writeText(j);$('bm').textContent='Záloha je ve schránce. Vlož ji někam do poznámek.'}catch(e){$('bi').value=j;$('bm').textContent='Záloha je v poli níže, zkopíruj ji ručně.'}};
+$('br').onclick=()=>{try{const j=JSON.parse($('bi').value);if(!j.cfg||!Array.isArray(j.t))throw 0;CFG=Object.assign(DEF(),j.cfg);T=j.t;REV=j.rev||{};S.s('tjcfg',CFG);S.s('tj2',T);S.s('tjrev',REV);$('bm').textContent='Obnoveno: '+T.length+' obchodů.'}catch(e){$('bm').textContent='Text zálohy není platný.'}};
+$('bd').onclick=()=>{if(confirm('Opravdu smazat všechna data (kapitál, cíl i obchody)?')){T=[];REV={};CFG=DEF();S.s('tj2',T);S.s('tjcfg',CFG);S.s('tjrev',REV);show(0)}};
+resetForm();show(CFG.cap>0?1:0);
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
